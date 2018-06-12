@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2002
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication2", "WebApplication2\WebApplication2.csproj", "{073EC919-5A6C-4FCB-8C1F-CC5B6F1A0125}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "signalRDemo", "WebApplication2\signalRDemo.csproj", "{073EC919-5A6C-4FCB-8C1F-CC5B6F1A0125}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

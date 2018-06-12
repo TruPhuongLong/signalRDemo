@@ -10,16 +10,32 @@
     <script>
         $(function () {
             const hub = $.connection.echo1;
-            hub.client.Hello = function (message) {
+
+            // get mes:
+            hub.client.message = function (message) {
                 var li = $('<li/>').html(message);
                 $('#messages').append(li);
             };
+
+            // get group:
+            hub.client.listGroup = function (listgroup) {
+                console.log(listgroup);
+            }
+
             $.connection.hub
                 .start()
                 .done(function () {
+                    //request group:
+                    hub.server.listGroup();
+
+                    // send mes:
                     $('#send').click(function () {
-                        console.log(hub.server)
-                        hub.server.helloServer($('#input').val());
+                        hub.server.message($('#input').val(), $('#groupNameSend').val());
+                    });
+
+                    // create group:
+                    $('#subcribeGroup').click(function () {
+                        hub.server.subcribe($('#groupNameSubcribe').val());
                     });
                 });
 
@@ -28,10 +44,22 @@
 
 </head>
 <body>
-    
-    <h1>hi</h1>
-    <ul id="messages"></ul>
-    <input id="input" placeholder="mes"/>
+
+    <h1>Chat Page</h1>
+    <button id="subcribeGroup">subcribe group</button>
+    <input id="groupNameSubcribe" placeholder="groupName subcribe" />
+    <br /><br />
     <button id="send">send</button>
+    <input id="groupNameSend" placeholder="groupName send" />
+    <input id="input" placeholder="mes" />
+    <select>
+        <option value="volvo">Volvo</option>
+        <option value="saab">Saab</option>
+        <option value="mercedes">Mercedes</option>
+        <option value="audi">Audi</option>
+    </select>
+    <ul id="messages"></ul>
+
+
 </body>
 </html>
