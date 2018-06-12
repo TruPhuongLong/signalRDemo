@@ -22,10 +22,8 @@ namespace WebApplication2
 
             // for send all but this:
             var connectionId = Context.ConnectionId;
-            connectionIds.UnionWith(
-            new[] { connectionId });
+            connectionIds.UnionWith(new[] { connectionId });
             Clients.All.connections(connectionIds);
-            Clients.All.listId(connectionIds);
         }
 
         // leave group:
@@ -56,6 +54,13 @@ namespace WebApplication2
             Clients.Group(group).message(mes);
         }
 
+        // send to Group except caller:
+        public void messageGroupExcept(string mes, string group)
+        {
+            var _mes = string.Format("Hello client with id: {0}, this time is: {1:F}, mes: {2}", Context.ConnectionId, DateTime.Now, mes);
+            Clients.Group(group, Context.ConnectionId).message(mes);
+        }
+
         // send to other except the sender: any group can be get this mes.
         public void messageOthers(string mes)
         {
@@ -70,6 +75,8 @@ namespace WebApplication2
             var allExcept = Clients.AllExcept(excludeConnectionId);
             allExcept.message(_mes);
         }
+
+        // send to Group except caller:
     }
 }
 
