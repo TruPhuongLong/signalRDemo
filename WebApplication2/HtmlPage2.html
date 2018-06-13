@@ -6,6 +6,12 @@
     <script src="Scripts/jquery-1.10.2.min.js"></script>
     <script src="Scripts/jquery.signalR-2.1.2.min.js"></script>
     <script src="/signalr/hubs"></script>
+
+
+
+
+
+
     <!--<script>
         $(function () {
             const hub = $.connection.echo1;
@@ -28,18 +34,20 @@
         });
     </script>-->
 
-    <script>
+    <!--<script>
         var hub = $.connection.hub;
         var echo1 = $.connection.echo1;
 
-        var started = hub.start({
-            transport: [
-                'webSockets',
-                'longPolling',
-                'serverSentEvents',
-                'foreverFrame'
-            ]
-        });
+        //var started = hub.start({
+        //    transport: [
+        //        'webSockets',
+        //        'longPolling',
+        //        'serverSentEvents',
+        //        'foreverFrame'
+        //    ]
+        //});
+
+       
 
         echo1.client.message = function (mes) {
             $('#message').append($('<li />').hmtl(mes));
@@ -50,16 +58,63 @@
                 error);
         });
 
-        //==================== dynamic:================
-        started.done(function () {
-            $('#connected')
-                .html('connected, transport: ' +
-                hub.transport.name);
+        
 
-            // send message and get here with value return from server:
+        //==================== dynamic:================
+      
+
+
+    </script>-->
+
+
+    <script>
+        const hub = $.connection.hub;
+        const echo = $.connection.echo1;
+        let starter = function () {
+            return hub
+                .start()
+                .done(function () {
+                    console.log('connected: ' + hub.id);
+
+                    
+                });
+        };
+
+
+        //====================function from hub =======================
+        hub.starting(function () {
+            console.log('starting'); //no hub.id yet!
+        });
+        hub.reconnecting(function () {
+            console.log('reconnecting: ' + hub.id);
+        });
+        hub.reconnected(function () {
+            console.log('reconnected: ' + hub.id);
+        });
+        hub.disconnected(function () {
+            console.log('disconnected: ' + hub.id);
+        });
+        hub.stateChanged(function (state) {
+            console.log('stateChanged: ' + hub.id);
+            console.log(state);
+            $("#toggle").attr('disabled',
+                state.newState !=
+                $.signalR.connectionState.connected &&
+                state.newState !=
+                $.signalR.connectionState.disconnected);
+        });
+
+        $(function () {
+            $("#toggle").click(function () {
+                //$("#toggle").attr('disabled', true);
+                if ($.signalR.connectionState.disconnected == echo.connection.state)
+                    starter();
+                else if ($.signalR.connectionState.connected == echo.connection.state)
+                    hub.stop();
+            });
             $('#send').click(function () {
                 try {
-                    echo1.server.returnMessage($('#text').val())
+                    echo.server.returnMessage($('#text').val())
                         .done(function (mes) {
                             $('#message').append($('<li />').html(mes));
                         })
@@ -69,9 +124,12 @@
                 } catch (e) {
 
                 }
-                
+
             })
-        });
+        })
+        
+       
+        starter();
     </script>
 </head>
 <body>
@@ -79,6 +137,7 @@
     <h3 id="connected"></h3>
     <input id="text" type="text" placeholder="type message" />
     <button id="send">send</button>
+    <button id="toggle">toggle</button>
     <ul id="message"></ul>
 </body>
 </html>

@@ -16,6 +16,7 @@ namespace WebApplication2
         protected override Task OnConnected(IRequest request,string connectionId)
         {
             return Connection.Send(connectionId, "Welcome!");
+
         }
 
         protected override Task OnReceived(IRequest request, string connectionId, string data)
@@ -102,9 +103,27 @@ namespace WebApplication2
         public string returnMessage(string message)
         {
             //return mes;
-            if (new Random().Next(2) == 0)
-                throw new ApplicationException("Doh!");
+            //if (new Random().Next(2) == 0)
+            //    throw new ApplicationException("Doh!");
             return message;
+        }
+
+        //======================overide ===============================
+        public override Task OnConnected()
+        {
+            Trace.WriteLine(string.Format("Connected: {0}", Context.ConnectionId));
+            return base.OnConnected();
+        }
+        //public override Task OnDisconnected()
+        //{
+        //    Trace.WriteLine(string.Format("Disconnected: {0}", Context.ConnectionId));
+        //    return base.OnDisconnected();
+        //}
+        public override Task OnReconnected()
+        {
+            Trace.WriteLine(string.Format("Reconnected: {0}",
+            Context.ConnectionId));
+            return base.OnReconnected();
         }
 
     }
