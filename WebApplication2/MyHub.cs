@@ -76,7 +76,15 @@ namespace WebApplication2
             allExcept.message(_mes);
         }
 
-        // send to Group except caller:
+        //============================================== part 2===================================================
+        public string returnMessage(string message)
+        {
+            //return mes;
+            if (new Random().Next(2) == 0)
+                throw new ApplicationException("Doh!");
+            return message;
+        }
+
     }
 }
 
