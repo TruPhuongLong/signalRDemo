@@ -93,6 +93,7 @@
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="HtmlPage2.html" />
+    <Content Include="persitance.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
