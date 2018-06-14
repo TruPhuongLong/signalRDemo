@@ -11,31 +11,12 @@ using Newtonsoft.Json;
 namespace WebApplication2
 {
 
-    public class EchoConnection : PersistentConnection
-    {
-        protected override Task OnConnected(IRequest request,string connectionId)
-        {
-            return Connection.Send(connectionId, "Welcome!");
-
-        }
-
-        protected override Task OnReceived(IRequest request, string connectionId, string data)
-        {
-            //return Connection.Send(connectionId, data);
-
-            var payload = JsonConvert.DeserializeAnonymousType(data, new {content = "", from = "" });
-            var body = string.Format("{0} said: {1}",payload.from, payload.content);
-            return Connection.Broadcast(body);
-        }
-    }
-
-
-
     [HubName("echo1")]
+    //[Authorize(Users = "DOMAIN/user")]
     public class MyHub : Hub
     {
         public static int count = 0;
-        static readonly HashSet<string> connectionIds = new HashSet<string>();
+        static readonly HashSet<User> connectionIds = new HashSet<User>();
 
         // subcribe in to group:
         public void subcribe(string group)
@@ -46,8 +27,10 @@ namespace WebApplication2
 
             // for send all but this:
             var connectionId = Context.ConnectionId;
-            connectionIds.UnionWith(new[] { connectionId });
+            connectionIds.UnionWith(new[] { new User { name = Clients.Caller.name, connectionId = connectionId } });
             Clients.All.connections(connectionIds);
+
+            
         }
 
         // leave group:
@@ -72,6 +55,12 @@ namespace WebApplication2
         public void messageCaller(string mes)
         {
             Clients.Caller.message(_getMes(mes));
+        }
+
+        // send to one client:
+        public void messageClient(string id, string mes)
+        {
+            Clients.Client(id).message(_getMes(mes));
         }
 
 
@@ -101,10 +90,7 @@ namespace WebApplication2
         }
 
         //============================================== part 2===================================================
-        public string returnMessage(string mes)
-        {
-            return _getMes(mes);
-        }
+       
 
         //======================overide ===============================
         public override Task OnConnected()
@@ -123,6 +109,12 @@ namespace WebApplication2
             return base.OnReconnected();
         }
 
+    }
+
+    class User
+    {
+        public string name { get; set; }
+        public string connectionId { get; set; }
     }
 }
 

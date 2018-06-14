@@ -12,15 +12,17 @@
             let connectionId;
 
             // connections -> listId:
-            echo1.client.connections = function (ids) {
+            echo1.client.connections = function (users) {
                 $('#ids').empty();
-                for (var i = 0, l = ids.length; i < l; i++) {
-                    var id = ids[i];
+                for (var i = 0, l = users.length; i < l; i++) {
+                    var id = users[i].connectionId;
                     if (id !== connectionId) {
                         $('#ids')
                             .append($('<option/>')
                             .attr('value', id)
-                            .html(id));
+                            .html(users[i].name));
+
+
                     }
                 }
             };
@@ -38,6 +40,7 @@
                     let group;
                     connectionId = $.connection.hub.id;
                     $('#id').html("id is: " + connectionId);
+                    $.connection.hub.url = "http://http://localhost:5000/signalr";
 
                     // subcribe group:
                     $('#subcribe').click(function () {
@@ -66,6 +69,10 @@
 
                     $('#messageCaller').click(function () {
                         echo1.server.messageCaller($('#input').val());
+                    });
+
+                    $('#messageClient').click(function () {
+                        echo1.server.messageClient($('#ids').val(), $('#input').val());
                     });
 
                     $('#messageGroup').click(function () {
@@ -125,6 +132,8 @@
                <br /> <br />
                <button id="messageCaller">messageCaller</button>
                <br /> <br />
+               <button id="messageClient">messageClient</button>
+               <br /><br />
                <button id="messageGroup">messageGroup</button>
                <br /> <br />
                <button id="messageGroupExcept">messageGroupExcept</button>

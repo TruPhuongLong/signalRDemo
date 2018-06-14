@@ -7,26 +7,56 @@
     <script src="Scripts/jquery-1.10.2.min.js"></script>
     <script src="Scripts/jquery.signalR-2.1.2.min.js"></script>
     <!--<script src="/signalr/hubs"></script>-->
-    <script>
+    <!--<script>
         $(function () {
-            //var c = $.connection('echo');
+            //var c = $.connection('persistent');
             //c.start()
             //    .done(function (x) {
             //        console.log(c);
             //        console.log(x); //x and c are the same!
             //    });
 
-            var c = $.connection('echo');
-            c.received(function (message) {
+            var persistentHub = $.connection('persistent');
+            persistentHub.received(function (message) {
                 console.log(message);
             })
-                .start()
+            persistentHub.start()
                 .done(function () {
-                    c.send({content: 'hello', from: 'longbaloca' });
+                    persistentHub.send({content: 'hello', from: 'longbaloca' });
                 })
         });
+    </script>-->
+    <script>
+        $(function () {
+            //const connection = $.hubConnection();
+            //const HubPersistent = connection.createHubProxy('HubPersistent');
+
+            //HubPersistent.on('greetings', function (message) {
+            //    console.log(message);
+            //});
+
+            //connection
+            //    .start()
+            //    .done(function () {
+            //        HubPersistent.invoke('sayHello');
+            //    });
+
+
+
+            var hub = $.connection.hub,
+                HubPersistent = $.connection.HubPersistent;
+            hub.start().done(function () {
+                $("#translate").click(function () {
+                    HubPersistent.server.sayHello()
+                        .done(function (message) {
+                            $("#translated").text(message);
+                        });
+                });
+            });
+        });
     </script>
-    
+   
+
 
 
 </head>
