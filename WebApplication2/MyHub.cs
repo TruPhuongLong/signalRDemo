@@ -40,6 +40,7 @@ namespace WebApplication2
         // subcribe in to group:
         public void subcribe(string group)
         {
+            Clients.Caller.name = Clients.Caller.name ?? "no name: ";
             // for message group:
             Groups.Add(Context.ConnectionId, group);
 
@@ -55,57 +56,54 @@ namespace WebApplication2
             Groups.Remove(Context.ConnectionId, group);
         }
 
+        private string _getMes(string mes)
+        {
+            return Clients.Caller.name + " : " + mes;
+        }
+
+        //================================message =======================================
         // send all client:
         public void messageAll(string mes)
         {
-            var _mes = string.Format("Hello client with id: {0}, this time is: {1:F}, mes: {2}", Context.ConnectionId, DateTime.Now, mes);
-            Clients.All.message(_mes);
+            Clients.All.message(_getMes(mes));
         }
 
         // send to client just come:
         public void messageCaller(string mes)
         {
-            var _mes = string.Format("Hello client with id: {0}, this time is: {1:F}, mes: {2}", Context.ConnectionId, DateTime.Now, mes);
-            Clients.Caller.message(_mes);
+            Clients.Caller.message(_getMes(mes));
         }
 
 
         // send to group:
         public void messageGroup(string mes, string group)
         {
-            var _mes = string.Format("Hello client with id: {0}, this time is: {1:F}, mes: {2}", Context.ConnectionId, DateTime.Now, mes);
-            Clients.Group(group).message(mes);
+            Clients.Group(group).message(_getMes(mes));
         }
 
         // send to Group except caller:
         public void messageGroupExcept(string mes, string group)
         {
-            var _mes = string.Format("Hello client with id: {0}, this time is: {1:F}, mes: {2}", Context.ConnectionId, DateTime.Now, mes);
-            Clients.Group(group, Context.ConnectionId).message(mes);
+            Clients.Group(group, Context.ConnectionId).message(_getMes(mes));
         }
 
         // send to other except the sender: any group can be get this mes.
         public void messageOthers(string mes)
         {
-            var _mes = string.Format("Hello client with id: {0}, this time is: {1:F}, mes: {2}", Context.ConnectionId, DateTime.Now, mes);
-            Clients.Others.message(mes);
+            Clients.Others.message(_getMes(mes));
         }
 
         // send to All except caller:
         public void messageAllExcept(string mes, string excludeConnectionId)
         {
-            var _mes = string.Format("Hello client with id: {0}, this time is: {1:F}, mes: {2}", Context.ConnectionId, DateTime.Now, mes);
             var allExcept = Clients.AllExcept(excludeConnectionId);
-            allExcept.message(_mes);
+            allExcept.message(_getMes(mes));
         }
 
         //============================================== part 2===================================================
-        public string returnMessage(string message)
+        public string returnMessage(string mes)
         {
-            //return mes;
-            //if (new Random().Next(2) == 0)
-            //    throw new ApplicationException("Doh!");
-            return message;
+            return _getMes(mes);
         }
 
         //======================overide ===============================
@@ -121,8 +119,7 @@ namespace WebApplication2
         //}
         public override Task OnReconnected()
         {
-            Trace.WriteLine(string.Format("Reconnected: {0}",
-            Context.ConnectionId));
+            Trace.WriteLine(string.Format("Reconnected: {0}",  Context.ConnectionId));
             return base.OnReconnected();
         }
 

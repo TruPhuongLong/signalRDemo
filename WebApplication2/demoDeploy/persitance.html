@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+
+    <script src="Scripts/jquery-1.10.2.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.1.2.min.js"></script>
+    <!--<script src="/signalr/hubs"></script>-->
+    <script>
+        $(function () {
+            //var c = $.connection('echo');
+            //c.start()
+            //    .done(function (x) {
+            //        console.log(c);
+            //        console.log(x); //x and c are the same!
+            //    });
+
+            var c = $.connection('echo');
+            c.received(function (message) {
+                console.log(message);
+            })
+                .start()
+                .done(function () {
+                    c.send({content: 'hello', from: 'longbaloca' });
+                })
+        });
+    </script>
+    
+
+
+</head>
+<body>
+    <h1>ok</h1>
+</body>
+</html>

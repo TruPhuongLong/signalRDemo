@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="Scripts/jquery-1.10.2.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.1.2.min.js"></script>
+    <script src="/signalr/hubs"></script>
+    <script>
+        $(function () {
+            const hub = $.connection.echo1;
+            let connectionId;
+
+            // connections -> listId:
+            hub.client.connections = function (ids) {
+                $('#ids').empty();
+                for (var i = 0, l = ids.length; i < l; i++) {
+                    var id = ids[i];
+                    if (id !== connectionId) {
+                        $('#ids')
+                            .append($('<option/>')
+                            .attr('value', id)
+                            .html(id));
+                    }
+                }
+            };
+
+            // get mes:
+            hub.client.message = function (message) {
+                var li = $('<li/>').html(message);
+                $('#messages').append(li);
+            };
+
+
+            $.connection.hub
+                .start()
+                .done(function () {
+                    let group;
+                    connectionId = $.connection.hub.id;
+                    $('#id').html("id is: " + connectionId);
+
+                    // subcribe group:
+                    $('#subcribe').click(function () {
+                        group = $('#group').val();
+                        hub.server.subcribe(group);
+                        toggle();
+                        $('#nameGroup').html("You are in group: " + group);
+                    });
+
+                    // unSubcribe group:
+                    $('#unSubcribe').click(function () {
+                        hub.server.unSubcribe(group);
+                        toggle();
+                    });
+
+                    
+
+                    //=====================send message=================
+                    // send mes:
+                    $('#messageAll').click(function () {
+                        hub.server.messageAll($('#input').val());
+                    });
+
+                    $('#messageCaller').click(function () {
+                        hub.server.messageCaller($('#input').val());
+                    });
+
+                    $('#messageGroup').click(function () {
+                        hub.server.messageGroup($('#input').val(), $('#group').val());
+                    });
+
+                    $('#messageGroupExcept').click(function () {
+                        hub.server.messageGroupExcept($('#input').val(), $('#group').val());
+                    });
+
+                    $('#messageOthers').click(function () {
+                        hub.server.messageOthers($('#input').val());
+                    });
+
+                    $('#messageAllExcept').click(function () {
+                        hub.server.messageAllExcept($('#input').val(), $('#ids').val());
+                    });
+
+                    
+                });
+
+            var toggle = function () {
+                $('#g1').toggle();
+                $('#g2').toggle();
+            }
+
+        });
+    </script>
+
+</head>
+<body>
+
+    <h1>Chat Page</h1>
+    <div id="g1">
+        <button id="subcribe">subcribe group</button>
+        <br /> <br />
+        <select id="group">
+            <option value="Ho Chi Minh">Ho Chi Minh</option>
+            <option value="Ha Noi">Ha Noi</option>
+            <option value="Korean">Korean</option>
+            <option value="London">London</option>
+        </select>
+    </div>
+    <br /> <br />
+           <div id="g2" style="display: none">
+               <h1 id="nameGroup"></h1>
+               <h1 id="id"></h1>
+               <br /><br />
+               <button id="unSubcribe">unSubcribe</button>
+               <br /> <br />
+               <button id="messageAll">messageAll</button>
+               <br /> <br />
+               <button id="messageCaller">messageCaller</button>
+               <br /> <br />
+               <button id="messageGroup">messageGroup</button>
+               <br /> <br />
+               <button id="messageGroupExcept">messageGroupExcept</button>
+               <br /> <br />
+               <button id="messageOthers">messageOthers</button>
+               <br /> <br />
+               <button id="messageAllExcept">messageAllExcept</button>
+
+               <br /> <br />
+               <input id="input" placeholder="mes" />
+               <br /><br />
+               <!--<input id="exceptId" placeholder="exceptId" />-->
+               <select id="ids"></select>
+           </div>
+
+
+
+    <ul id="messages"></ul>
+    <hr />
+
+
+</body>
+</html>
